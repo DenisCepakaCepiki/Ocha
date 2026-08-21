@@ -1,1305 +1,316 @@
-/* =====================================================
-   HAPPY BIRTHDAY ROSSA MEPARINDA
-   SCRIPT.JS
-   Part 1 — Core Navigation & Loading
-===================================================== */
+const $=(s,p=document)=>p.querySelector(s),$$=(s,p=document)=>[...p.querySelectorAll(s)];
+const pages=$$('.page'),dots=$('#pageDots'),prev=$('#prevPage'),next=$('#nextPage'),music=$('#music'),musicBtn=$('#musicBtn'),musicState=$('#musicState');
+let current=0, audioStarted=false, musicWanted=true;
 
-
-/* =====================================================
-   ELEMENTS
-===================================================== */
-
-const loading =
-    document.getElementById("loading");
-
-const loadingProgress =
-    document.getElementById("loadingProgress");
-
-const app =
-    document.getElementById("app");
-
-const screens = {
-
-    opening:
-        document.getElementById("opening"),
-
-    greeting:
-        document.getElementById("greeting"),
-
-    story:
-        document.getElementById("story"),
-
-    virtual:
-        document.getElementById("virtual"),
-
-    gallery:
-        document.getElementById("gallery"),
-
-    message:
-        document.getElementById("message"),
-
-    final:
-        document.getElementById("final")
-
-};
-
-
-/* =====================================================
-   BUTTONS
-===================================================== */
-
-const openButton =
-    document.getElementById("openButton");
-
-const greetingNext =
-    document.getElementById("greetingNext");
-
-const storyNext =
-    document.getElementById("storyNext");
-
-const virtualNext =
-    document.getElementById("virtualNext");
-
-const galleryNext =
-    document.getElementById("galleryNext");
-
-const messageNext =
-    document.getElementById("messageNext");
-
-const restartButton =
-    document.getElementById("restartButton");
-
-
-/* =====================================================
-   CURRENT SCREEN
-===================================================== */
-
-let currentScreen = "opening";
-
-
-/* =====================================================
-   SHOW SCREEN
-===================================================== */
-
-function showScreen(screenName) {
-
-    const target =
-        screens[screenName];
-
-    if (!target) return;
-
-
-    /* Hide semua screen */
-
-    Object.values(screens).forEach(
-        screen => {
-
-            screen.classList.add("hidden");
-
-            screen.classList.remove("active");
-
-        }
-    );
-
-
-    /* Tampilkan screen tujuan */
-
-    target.classList.remove("hidden");
-
-    target.classList.add("active");
-
-
-    currentScreen =
-        screenName;
-
-
-    /* Scroll ke atas */
-
-    window.scrollTo({
-
-        top: 0,
-
-        behavior: "smooth"
-
-    });
-
+/* ---------- loading + music ---------- */
+const prelude=$('#prelude'),bar=$('#loOcharBar'),loOcharText=$('#loOcharText');
+const loadWords=['memuat kenangan...','menyalakan lampu kecil...','menyiapkan foto...','menulis pesan...','hampir selesai...'];
+function tryStartMusic(){
+  if(!musicWanted||audioStarted)return;
+  const p=music.play();
+  if(p&&p.then)p.then(()=>{audioStarted=true;musicBtn.textContent='♫';musicState.textContent='sound on'}).catch(()=>{});
 }
+['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,tryStartMusic,{passive:true}));
+function finishPrelude(){
+  tryStartMusic();
+  $('#app').classList.remove('is-hidden');
+  prelude.classList.add('done');
+  setTimeout(()=>prelude.remove(),1100);
+}
+let progress=0;
+const loadTimer=setInterval(()=>{
+  progress=Math.min(100,progress+Math.random()*9+3);
+  bar.style.width=progress+'%';
+  loOcharText.textContent=loadWords[Math.min(loadWords.length-1,Math.floor(progress/21))];
+  if(progress>=100){clearInterval(loadTimer);setTimeout(finishPrelude,650)}
+},90);
+$('#preludeHeart').addEventListener('click',()=>{tryStartMusic();bar.style.width='100%';setTimeout(finishPrelude,200)});
+
+/* ---------- page navigation ---------- */
+for(let i=0;i<pages.length;i++){const d=document.createElement('i');d.addEventListener('click',()=>go(i));dots.appendChild(d)}
+function updateDots(){
+  $$('.page-dots i').forEach((d,i)=>d.classList.toggle('active',i===current));
+  prev.disabled=current===0;next.disabled=current===pages.length-1;
+}
+function go(index,dir=1){
+  if(index<0||index>=pages.length||index===current)return;
+  const old=pages[current],target=pages[index];
+  old.classList.remove('active');
+  target.classList.add('active');
+  current=index;updateDots();
+  window.scrollTo({top:0,behavior:'smooth'});
+  animatePage(target,dir);
+  if(current===6)spawnBalloons();
+}
+function animatePage(page,dir){
+  const els=$$('.reveal',page);els.forEach((el,i)=>{el.style.animation='none';void el.offsetWidth;el.style.animation='';el.style.animationDelay=(i*.08)+'s'});
+}
+$$('[data-next]').forEach(b=>b.addEventListener('click',()=>go(Number(b.dataset.next),1)));
+prev.addEventListener('click',()=>go(current-1,-1));next.addEventListener('click',()=>go(current+1,1));
+updateDots();
+
+/* ---------- music UI ---------- */
+musicBtn.addEventListener('click',e=>{e.stopPropagation();if(music.paused){musicWanted=true;tryStartMusic()}else{music.pause();musicWanted=false;audioStarted=false;musicBtn.textContent='♪';musicState.textContent='muted'}});
+
+/* ---------- sliders on every photo page ---------- */
+$$('[data-slider]').forEach(slider=>{
+  const slides=$$('.slide',slider), dotsBox=$('.slider-dots',slider);let idx=0,timer;let startX=0;
+  slides.forEach((_,i)=>{const d=document.createElement('i');if(i===0)d.classList.add('active');dotsBox.appendChild(d);d.addEventListener('click',e=>{e.stopPropagation();show(i)})});
+  const dotEls=$$('i',dotsBox);
+  function show(n){idx=(n+slides.length)%slides.length;slides.forEach((s,i)=>s.classList.toggle('active',i===idx));dotEls.forEach((d,i)=>d.classList.toggle('active',i===idx));$('.photo-caption span',slider).textContent=String(idx+1).padStart(2,'0')}
+  function auto(){clearInterval(timer);timer=setInterval(()=>show(idx+1),4200)}
+  slider.addEventListener('pointerdown',e=>{startX=e.clientX;slider.setPointerCapture?.(e.pointerId)});
+  slider.addEventListener('pointerup',e=>{const dx=e.clientX-startX;if(Math.abs(dx)>45)show(idx+(dx<0?1:-1));auto()});
+  slider.addEventListener('mouseenter',()=>clearInterval(timer));slider.addEventListener('mouseleave',auto);auto();
+});
+
+/* ---------- gallery lightbox ---------- */
+const lightbox=$('#lightbox'),lightboxImg=$('#lightboxImg');
+$$('.gallery-tile').forEach(tile=>tile.addEventListener('click',()=>{lightboxImg.src=$('img',tile).src;lightbox.classList.add('open');lightbox.setAttribute('aria-hidden','false')}));
+function closeLightbox(){lightbox.classList.remove('open');lightbox.setAttribute('aria-hidden','true');lightboxImg.src=''}
+$('#lightboxClose').addEventListener('click',closeLightbox);lightbox.addEventListener('click',e=>{if(e.target===lightbox)closeLightbox()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox()});
+
+/* ---------- little interactions ---------- */
+const toast=$('#toast');let toastTimer;
+$$('[data-toast]').forEach(b=>b.addEventListener('click',()=>{toast.textContent=b.dataset.toast;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}));
+function spawnHeart(x,y){const h=document.createElement('span');h.textContent=['♡','✦','♥','✧'][Math.floor(Math.random()*4)];h.className='click-heart';h.style.left=x+'px';h.style.top=y+'px';document.body.appendChild(h);setTimeout(()=>h.remove(),1100)}
+document.addEventListener('click',e=>{if(e.target.closest('button'))return;spawnHeart(e.clientX,e.clientY)});
+
+/* ---------- letter ---------- */
+const letterPages=[
+  'Ocha... abang mungkin bukan abang yang selalu bisa ada setiap saat. Kita juga cuma bertemu lewat dunia online. Tapi abang benar-benar bersyukur pernah dipertemukan dengan Ocha. 🤍',
+  'Semoga bertambahnya umur Ocha bukan cuma sekadar angka. Semoga Ocha semakin kuat, semakin dewasa, semakin bahagia, dan semakin dekat dengan semua impian Ocha. 🌷',
+  'Kalau suatu hari nanti kita sudah jarang bermain, jarang ngobrol, atau sibuk dengan kehidupan masing-masing... semoga Ocha tetap ingat kalau pernah ada seseorang di dunia virtual yang menganggap Ocha sebagai Ocha online-nya. Terima kasih sudah menjadi bagian dari cerita kecil ini. 🤍'
+];
+let letterIndex=0;
+function renderLetter(){
+  const box=$('#letterText'),text=letterPages[letterIndex];box.innerHTML='';text.split(/(?<=\.|🤍|🌷)\s+/).forEach((line,i)=>{const span=document.createElement('span');span.className='line';span.textContent=line+' ';span.style.animationDelay=i*.1+'s';box.appendChild(span)});
+  $('#letterCounter').textContent=String(letterIndex+1).padStart(2,'0')+' / 03';$('#letterProgress').style.width=((letterIndex+1)/3*100)+'%';$('#letterBack').disabled=letterIndex===0;$('#letterNext').textContent=letterIndex===2?'Lihat akhir ✨':'→';
+}
+$('#letterNext').addEventListener('click',()=>{if(letterIndex<2){letterIndex++;renderLetter()}else go(6)});
+$('#letterBack').addEventListener('click',()=>{if(letterIndex>0){letterIndex--;renderLetter()}});renderLetter();
+
+/* ---------- final balloons ---------- */
+let balloonsMOcha=false;
+function spawnBalloons(){
+  if(balloonsMOcha)return;balloonsMOcha=true;const field=$('#balloons');
+  for(let i=0;i<24;i++){const b=document.createElement('span');b.className='balloon';b.style.left=Math.random()*100+'%';b.style.setProperty('--size',(38+Math.random()*35)+'px');b.style.setProperty('--hue',Math.floor(Math.random()*360));b.style.setProperty('--duration',(8+Math.random()*7)+'s');b.style.setProperty('--delay',(Math.random()*5)+'s');b.style.setProperty('--drift',(-70+Math.random()*140)+'px');field.appendChild(b)}
+}
+$('#wishBtn').addEventListener('click',()=>{
+  const result=$('#wishResult');result.textContent='✨ Harapan baik sudah dikirim ke langit. Sekarang... senyum dulu. ✨';
+  for(let i=0;i<9;i++)setTimeout(()=>spawnHeart(window.innerWidth/2+(Math.random()-.5)*260,window.innerHeight*.58),i*100);
+});
+$('#restartBtn').addEventListener('click',()=>{letterIndex=0;renderLetter();current=0;pages.forEach((p,i)=>p.classList.toggle('active',i===0));updateDots();window.scrollTo({top:0,behavior:'smooth'});$('#wishResult').textContent='';});
+
+/* ---------- keyboard / wheel ---------- */
+document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;if(e.key==='ArrowRight')go(current+1,1);if(e.key==='ArrowLeft')go(current-1,-1)});
+let wheelLock=false;window.addEventListener('wheel',e=>{if(wheelLock||Math.abs(e.deltaY)<35)return;wheelLock=true;go(current+(e.deltaY>0?1:-1),e.deltaY>0?1:-1);setTimeout(()=>wheelLock=false,850)},{passive:true});
+
+/* click the prelude heart also counts as the first user gesture for audio */
 
 
-/* =====================================================
-   LOADING SYSTEM
-===================================================== */
 
-let loadingValue = 0;
-
-
-const loadingInterval =
-    setInterval(() => {
-
-        loadingValue +=
-            Math.random() * 8;
-
-
-        if (loadingValue >= 100) {
-
-            loadingValue = 100;
-
-        }
-
-
-        loadingProgress.style.width =
-            loadingValue + "%";
-
-
-        if (loadingValue >= 100) {
-
-            clearInterval(
-                loadingInterval
-            );
-
-
-            setTimeout(() => {
-
-                loading.classList.add(
-                    "hidden"
-                );
-
-                app.classList.remove(
-                    "hidden"
-                );
-
-            }, 500);
-
-        }
-
-    }, 120);
-
-
-/* =====================================================
-   OPEN WEBSITE
-===================================================== */
-
-openButton.addEventListener(
-    "click",
-    () => {
-
-        showScreen("greeting");
-
-    }
-);
-
-
-/* =====================================================
-   GREETING → STORY
-===================================================== */
-
-greetingNext.addEventListener(
-    "click",
-    () => {
-
-        showScreen("story");
-
-    }
-);
-
-
-/* =====================================================
-   STORY → VIRTUAL
-===================================================== */
-
-storyNext.addEventListener(
-    "click",
-    () => {
-
-        showScreen("virtual");
-
-    }
-);
-
-
-/* =====================================================
-   VIRTUAL → GALLERY
-===================================================== */
-
-virtualNext.addEventListener(
-    "click",
-    () => {
-
-        showScreen("gallery");
-
-    }
-);
 
 
 /* =====================================================
-   GALLERY → MESSAGE
+   MOBILE-FIRST EXPERIENCE CONTROLLER
 ===================================================== */
 
-galleryNext.addEventListener(
-    "click",
-    () => {
+(function initMobileExperience() {
 
-        showScreen("message");
+    const music =
+        document.getElementById("backgroundMusic");
 
-    }
-);
+    const intro =
+        document.getElementById("introLoader");
 
+    const introStatus =
+        document.getElementById("introStatus");
 
-/* =====================================================
-   MESSAGE → FINAL
-===================================================== */
+    let musicStarted = false;
 
-messageNext.addEventListener(
-    "click",
-    () => {
+    function startMusic() {
 
-        showScreen("final");
+        if (!music || musicStarted) return;
 
-        startConfetti();
+        music.preload = "auto";
+        music.loop = true;
 
-    }
-);
+        const p = music.play();
 
+        if (p && typeof p.then === "function") {
 
-/* =====================================================
-   RESTART
-===================================================== */
+            p.then(() => {
 
-restartButton.addEventListener(
-    "click",
-    () => {
+                musicStarted = true;
 
-        showScreen("opening");
+            }).catch(() => {
 
-        window.scrollTo({
-
-            top: 0,
-
-            behavior: "smooth"
-
-        });
-
-    }
-);
-/* =====================================================
-   HAPPY BIRTHDAY ROSSA MEPARINDA
-   SCRIPT.JS
-   Part 2 — Music, Stars & Floating Particles
-===================================================== */
-
-
-/* =====================================================
-   MUSIC
-===================================================== */
-
-const bgMusic =
-    document.getElementById("bgMusic");
-
-const musicButton =
-    document.getElementById("musicButton");
-
-
-let musicPlaying = false;
-
-
-/* =====================================================
-   PLAY MUSIC
-===================================================== */
-
-function playMusic() {
-
-    if (!bgMusic) return;
-
-
-    bgMusic.volume = 0.45;
-
-
-    const playPromise =
-        bgMusic.play();
-
-
-    if (playPromise !== undefined) {
-
-        playPromise
-            .then(() => {
-
-                musicPlaying = true;
-
-                updateMusicButton();
-
-            })
-            .catch(() => {
-
-                musicPlaying = false;
-
-                updateMusicButton();
+                /* Browser autoplay policy; unlock on first tap. */
 
             });
 
-    }
-
-}
-
-
-/* =====================================================
-   PAUSE MUSIC
-===================================================== */
-
-function pauseMusic() {
-
-    if (!bgMusic) return;
-
-
-    bgMusic.pause();
-
-    musicPlaying = false;
-
-    updateMusicButton();
-
-}
-
-
-/* =====================================================
-   MUSIC BUTTON
-===================================================== */
-
-function updateMusicButton() {
-
-    if (!musicButton) return;
-
-
-    musicButton.textContent =
-        musicPlaying
-            ? "🔊"
-            : "🎵";
-
-}
-
-
-if (musicButton) {
-
-    musicButton.addEventListener(
-        "click",
-        () => {
-
-            if (musicPlaying) {
-
-                pauseMusic();
-
-            } else {
-
-                playMusic();
-
-            }
-
         }
-    );
-
-}
-
-
-/* =====================================================
-   START MUSIC AFTER USER INTERACTION
-===================================================== */
-
-if (openButton) {
-
-    openButton.addEventListener(
-        "click",
-        () => {
-
-            playMusic();
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   CREATE STARS
-===================================================== */
-
-const starsContainer =
-    document.getElementById("stars");
-
-
-function createStars() {
-
-    if (!starsContainer) return;
-
-
-    starsContainer.innerHTML = "";
-
-
-    const starCount =
-        window.innerWidth < 600
-            ? 70
-            : 120;
-
-
-    for (
-        let i = 0;
-        i < starCount;
-        i++
-    ) {
-
-        const star =
-            document.createElement("span");
-
-
-        star.className =
-            "star";
-
-
-        star.style.left =
-            Math.random() * 100 + "%";
-
-
-        star.style.top =
-            Math.random() * 100 + "%";
-
-
-        star.style.animationDelay =
-            Math.random() * 4 + "s";
-
-
-        star.style.animationDuration =
-            Math.random() * 3 + 2 + "s";
-
-
-        const size =
-            Math.random() * 2 + 1;
-
-
-        star.style.width =
-            size + "px";
-
-
-        star.style.height =
-            size + "px";
-
-
-        starsContainer.appendChild(
-            star
-        );
 
     }
 
-}
+    const unlock = () => {
 
+        startMusic();
 
-/* =====================================================
-   CREATE FLOATING PARTICLE
-===================================================== */
+        if (musicStarted) {
 
-const particlesContainer =
-    document.getElementById("particles");
+            document.removeEventListener("pointerdown", unlock);
 
+        }
 
-const particleSymbols = [
+    };
 
-    "🤍",
-    "✨",
-    "🌸",
-    "💜",
-    "🎀",
-    "⭐"
-
-];
-
-
-function createParticle() {
-
-    if (!particlesContainer) return;
-
-
-    const particle =
-        document.createElement("span");
-
-
-    particle.className =
-        "particle";
-
-
-    particle.textContent =
-        particleSymbols[
-            Math.floor(
-                Math.random() *
-                particleSymbols.length
-            )
-        ];
-
-
-    particle.style.left =
-        Math.random() * 100 + "%";
-
-
-    particle.style.fontSize =
-        Math.random() * 12 + 12 + "px";
-
-
-    const duration =
-        Math.random() * 7 + 7;
-
-
-    particle.style.animationDuration =
-        duration + "s";
-
-
-    particlesContainer.appendChild(
-        particle
+    document.addEventListener(
+        "pointerdown",
+        unlock,
+        { passive: true }
     );
 
+    const statuses = [
+        "Menyiapkan cerita...",
+        "Mengingat awal kenal...",
+        "Reality → Discord → Roblox...",
+        "Hampir mulai..."
+    ];
 
-    setTimeout(
-        () => {
+    if (introStatus) {
 
-            particle.remove();
+        statuses.forEach((text, i) => {
 
-        },
-        duration * 1000
-    );
-
-}
-
-
-/* =====================================================
-   PARTICLE LOOP
-===================================================== */
-
-function startParticles() {
-
-    setInterval(
-        () => {
-
-            createParticle();
-
-        },
-        900
-    );
-
-}
-
-
-/* =====================================================
-   INITIALIZE BACKGROUND
-===================================================== */
-
-createStars();
-
-startParticles();
-
-
-/* =====================================================
-   RECREATE STARS WHEN RESIZING
-===================================================== */
-
-let resizeTimer;
-
-
-window.addEventListener(
-    "resize",
-    () => {
-
-        clearTimeout(
-            resizeTimer
-        );
-
-
-        resizeTimer =
-            setTimeout(
+            window.setTimeout(
                 () => {
 
-                    createStars();
+                    if (introStatus) {
+                        introStatus.textContent = text;
+                    }
 
                 },
-                300
+                i * 520
             );
-
-    }
-);
-/* =====================================================
-   HAPPY BIRTHDAY ROSSA MEPARINDA
-   SCRIPT.JS
-   Part 3 — Gallery Lightbox
-===================================================== */
-
-
-/* =====================================================
-   GALLERY ELEMENTS
-===================================================== */
-
-const galleryItems =
-    document.querySelectorAll(
-        ".gallery-item"
-    );
-
-
-const lightbox =
-    document.getElementById(
-        "lightbox"
-    );
-
-
-const lightboxImage =
-    document.getElementById(
-        "lightboxImage"
-    );
-
-
-const closeLightbox =
-    document.getElementById(
-        "closeLightbox"
-    );
-
-
-/* =====================================================
-   OPEN LIGHTBOX
-===================================================== */
-
-function openLightbox(imageSource) {
-
-    if (!lightbox) return;
-
-    if (!lightboxImage) return;
-
-
-    lightboxImage.src =
-        imageSource;
-
-
-    lightbox.classList.remove(
-        "hidden"
-    );
-
-
-    document.body.style.overflow =
-        "hidden";
-
-}
-
-
-/* =====================================================
-   CLOSE LIGHTBOX
-===================================================== */
-
-function closeLightboxWindow() {
-
-    if (!lightbox) return;
-
-
-    lightbox.classList.add(
-        "hidden"
-    );
-
-
-    document.body.style.overflow =
-        "";
-
-}
-
-
-/* =====================================================
-   GALLERY CLICK
-===================================================== */
-
-galleryItems.forEach(
-    item => {
-
-        const image =
-            item.querySelector(
-                "img"
-            );
-
-
-        if (!image) return;
-
-
-        item.addEventListener(
-            "click",
-            () => {
-
-                openLightbox(
-                    image.src
-                );
-
-            }
-        );
-
-    }
-);
-
-
-/* =====================================================
-   CLOSE BUTTON
-===================================================== */
-
-if (closeLightbox) {
-
-    closeLightbox.addEventListener(
-        "click",
-        () => {
-
-            closeLightboxWindow();
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   CLICK OUTSIDE IMAGE
-===================================================== */
-
-if (lightbox) {
-
-    lightbox.addEventListener(
-        "click",
-        event => {
-
-            if (
-                event.target ===
-                lightbox
-            ) {
-
-                closeLightboxWindow();
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   ESCAPE KEY
-===================================================== */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Escape"
-        ) {
-
-            if (
-                lightbox &&
-                !lightbox.classList.contains(
-                    "hidden"
-                )
-            ) {
-
-                closeLightboxWindow();
-
-            }
-
-        }
-
-    }
-);
-
-
-/* =====================================================
-   PREVENT IMAGE DRAG
-===================================================== */
-
-document
-    .querySelectorAll(
-        "img"
-    )
-    .forEach(
-        image => {
-
-            image.addEventListener(
-                "dragstart",
-                event => {
-
-                    event.preventDefault();
-
-                }
-            );
-
-        }
-    );
-/* =====================================================
-   HAPPY BIRTHDAY ROSSA MEPARINDA
-   SCRIPT.JS
-   Part 4 — Confetti, Final Effects & Initialization
-===================================================== */
-
-
-/* =====================================================
-   CONFETTI CANVAS
-===================================================== */
-
-const confettiCanvas =
-    document.getElementById(
-        "confettiCanvas"
-    );
-
-
-const confettiContext =
-    confettiCanvas
-        ? confettiCanvas.getContext("2d")
-        : null;
-
-
-let confettiPieces = [];
-
-let confettiAnimation;
-
-
-/* =====================================================
-   RESIZE CANVAS
-===================================================== */
-
-function resizeConfettiCanvas() {
-
-    if (!confettiCanvas) return;
-
-
-    confettiCanvas.width =
-        window.innerWidth;
-
-
-    confettiCanvas.height =
-        window.innerHeight;
-
-}
-
-
-resizeConfettiCanvas();
-
-
-window.addEventListener(
-    "resize",
-    resizeConfettiCanvas
-);
-
-
-/* =====================================================
-   CREATE CONFETTI
-===================================================== */
-
-function createConfetti() {
-
-    confettiPieces = [];
-
-
-    const amount =
-        window.innerWidth < 600
-            ? 100
-            : 180;
-
-
-    for (
-        let i = 0;
-        i < amount;
-        i++
-    ) {
-
-        confettiPieces.push({
-
-            x:
-                Math.random() *
-                window.innerWidth,
-
-            y:
-                -Math.random() *
-                window.innerHeight,
-
-            width:
-                Math.random() * 8 + 4,
-
-            height:
-                Math.random() * 12 + 6,
-
-            speed:
-                Math.random() * 4 + 3,
-
-            rotation:
-                Math.random() * 360,
-
-            rotationSpeed:
-                Math.random() * 8 - 4,
-
-            opacity:
-                Math.random() * .5 + .5,
-
-            symbol:
-                Math.random() > .5
-                    ? "♥"
-                    : "✦"
 
         });
 
     }
 
-}
+    /*
+     * Musik dimulai setelah intro selesai.
+     * Jika browser mengizinkan autoplay, ini langsung berbunyi.
+     * Jika tidak, tap pertama akan mengaktifkannya.
+     */
+    window.setTimeout(() => {
 
+        startMusic();
 
-/* =====================================================
-   DRAW CONFETTI
-===================================================== */
+        if (intro) {
 
-function drawConfetti() {
+            intro.classList.add("is-hidden");
 
-    if (
-        !confettiCanvas ||
-        !confettiContext
-    ) return;
+            window.setTimeout(
+                () => intro.remove(),
+                900
+            );
 
+        }
 
-    confettiContext.clearRect(
-        0,
-        0,
-        confettiCanvas.width,
-        confettiCanvas.height
+    }, 2300);
+
+    /*
+     * Scroll/wheel tidak digunakan sebagai navigasi.
+     * Cegah browser menggeser halaman.
+     */
+    window.addEventListener(
+        "wheel",
+        event => event.preventDefault(),
+        { passive: false }
     );
 
+    window.addEventListener(
+        "touchmove",
+        event => {
 
-    confettiPieces.forEach(
-        piece => {
-
-            confettiContext.save();
-
-
-            confettiContext.translate(
-                piece.x,
-                piece.y
-            );
-
-
-            confettiContext.rotate(
-                piece.rotation *
-                Math.PI /
-                180
-            );
-
-
-            confettiContext.globalAlpha =
-                piece.opacity;
-
-
-            confettiContext.font =
-                `${piece.height}px Poppins, sans-serif`;
-
-
-            confettiContext.fillStyle =
-                Math.random() > .5
-                    ? "#f9a8d4"
-                    : "#c4b5fd";
-
-
-            confettiContext.fillText(
-                piece.symbol,
-                0,
-                0
-            );
-
-
-            confettiContext.restore();
-
-
-            piece.y +=
-                piece.speed;
-
-
-            piece.rotation +=
-                piece.rotationSpeed;
-
-
-            if (
-                piece.y >
-                window.innerHeight + 50
-            ) {
-
-                piece.y =
-                    -20;
-
-                piece.x =
-                    Math.random() *
-                    window.innerWidth;
-
+            /*
+             * Jangan izinkan gesture scroll vertikal.
+             * Swipe horizontal tetap ditangani oleh app jika ada.
+             */
+            if (Math.abs(event.touches[0]?.clientY || 0) > 0) {
+                event.preventDefault();
             }
 
-        }
-    );
-
-
-    confettiAnimation =
-        requestAnimationFrame(
-            drawConfetti
-        );
-
-}
-
-
-/* =====================================================
-   START CONFETTI
-===================================================== */
-
-function startConfetti() {
-
-    if (
-        !confettiCanvas ||
-        !confettiContext
-    ) return;
-
-
-    createConfetti();
-
-
-    if (confettiAnimation) {
-
-        cancelAnimationFrame(
-            confettiAnimation
-        );
-
-    }
-
-
-    drawConfetti();
-
-
-    setTimeout(
-        () => {
-
-            stopConfetti();
-
         },
-        9000
+        { passive: false }
     );
 
-}
+})();
 
 
-/* =====================================================
-   STOP CONFETTI
-===================================================== */
+(function initJourneyCards() {
 
-function stopConfetti() {
+    const cards =
+        document.querySelectorAll(".journey-card");
 
-    if (confettiAnimation) {
+    const texts = {
 
-        cancelAnimationFrame(
-            confettiAnimation
-        );
+        reality:
+            "Di Reality semuanya bermula. Cuma awalnya belum tahu bakal lanjut sejauh ini wkwk.",
 
-        confettiAnimation =
-            null;
+        discord:
+            "Dari Reality lanjut ke Discord. Tempat obrolan random mulai bertambah.",
 
-    }
+        roblox:
+            "Sampai akhirnya Roblox. Dari sini cerita mabar jadi makin banyak."
 
+    };
 
-    if (
-        confettiContext &&
-        confettiCanvas
-    ) {
+    cards.forEach(card => {
 
-        confettiContext.clearRect(
-            0,
-            0,
-            confettiCanvas.width,
-            confettiCanvas.height
-        );
+        card.addEventListener("click", () => {
 
-    }
+            const key =
+                card.dataset.story;
 
-}
+            const message =
+                texts[key];
 
+            if (!message) return;
 
-/* =====================================================
-   FINAL SCREEN EFFECT
-===================================================== */
+            const old =
+                document.querySelector(".journey-pop");
 
-function finalScreenEffect() {
+            if (old) old.remove();
 
-    const finalScreen =
-        document.getElementById(
-            "final"
-        );
+            const pop =
+                document.createElement("div");
 
+            pop.className = "journey-pop";
 
-    if (!finalScreen) return;
+            pop.innerHTML =
+                `<b>${key.toUpperCase()}</b><span>${message}</span>`;
 
+            document.body.appendChild(pop);
 
-    finalScreen.classList.add(
-        "final-active"
-    );
-
-
-    setTimeout(
-        () => {
-
-            finalScreen.classList.remove(
-                "final-active"
+            requestAnimationFrame(
+                () => pop.classList.add("show")
             );
 
-        },
-        3000
-    );
+            window.setTimeout(() => {
 
-}
+                pop.classList.remove("show");
 
+                window.setTimeout(
+                    () => pop.remove(),
+                    300
+                );
 
-/* =====================================================
-   WATCH FINAL SCREEN
-===================================================== */
+            }, 2400);
 
-const finalObserver =
-    new MutationObserver(
-        mutations => {
+        });
 
-            mutations.forEach(
-                mutation => {
+    });
 
-                    if (
-                        mutation.target.id !==
-                        "final"
-                    ) return;
-
-
-                    if (
-                        !mutation.target.classList.contains(
-                            "hidden"
-                        )
-                    ) {
-
-                        finalScreenEffect();
-
-                    }
-
-                }
-            );
-
-        }
-    );
-
-
-if (screens.final) {
-
-    finalObserver.observe(
-        screens.final,
-        {
-            attributes: true,
-            attributeFilter: [
-                "class"
-            ]
-        }
-    );
-
-}
-
-
-/* =====================================================
-   RESTART CLEANUP
-===================================================== */
-
-if (restartButton) {
-
-    restartButton.addEventListener(
-        "click",
-        () => {
-
-            stopConfetti();
-
-            closeLightboxWindow();
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   PAGE VISIBILITY
-===================================================== */
-
-document.addEventListener(
-    "visibilitychange",
-    () => {
-
-        if (!bgMusic) return;
-
-
-        if (
-            document.hidden
-        ) {
-
-            bgMusic.pause();
-
-            musicPlaying =
-                false;
-
-            updateMusicButton();
-
-        }
-
-    }
-);
-
-
-/* =====================================================
-   PAGE LOAD
-===================================================== */
-
-window.addEventListener(
-    "load",
-    () => {
-
-        createStars();
-
-        resizeConfettiCanvas();
-
-    }
-);
-
-
-/* =====================================================
-   PREVENT ACCIDENTAL DOUBLE CLICK
-===================================================== */
-
-let buttonLocked = false;
-
-
-function lockButton(
-    button,
-    callback
-) {
-
-    if (!button) return;
-
-
-    button.addEventListener(
-        "click",
-        () => {
-
-            if (buttonLocked)
-                return;
-
-
-            buttonLocked = true;
-
-
-            callback();
-
-
-            setTimeout(
-                () => {
-
-                    buttonLocked =
-                        false;
-
-                },
-                500
-            );
-
-        }
-    );
-
-};
+})();
