@@ -1,778 +1,232 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Happy Birthday Rossa Meparinda 🎂</title>
-
-    <meta
-        name="theme-color"
-        content="#8b5cf6"
-    >
-
-    <meta
-        name="description"
-        content="Selamat ulang tahun untuk Rossa Meparinda, ade online ku ❤️"
-    >
-
-    <!-- ==========================
-        GOOGLE FONT
-    =========================== -->
-
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
-
-    <!-- ==========================
-        CSS
-    =========================== -->
-
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Untuk Ocha — A Little Birthday Story ✨</title>
+<meta name="theme-color" content="#140b1d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
-
-
 <body>
 
-
-    <!-- ==========================
-        BACKGROUND
-    =========================== -->
-
-    <div class="background">
-
-        <div class="aurora aurora-one"></div>
-
-        <div class="aurora aurora-two"></div>
-
-        <div class="aurora aurora-three"></div>
-
+<div id="introLoader" class="intro-loader" aria-hidden="false">
+    <div class="intro-stars"></div>
+    <div class="intro-glow"></div>
+    <div class="intro-content">
+        <div class="intro-heart">♡</div>
+        <p class="intro-kicker">A LITTLE SURPRISE FOR</p>
+        <p class="intro-name">ROSSA MEPARINDA</p>
+        <h1>Ocha</h1>
+        <p class="intro-subtitle">Dari Reality, lanjut Discord, lalu nyasar ke Roblox.</p>
+        <div class="intro-loader-line"><span></span></div>
+        <p class="intro-status" id="introStatus">Menyiapkan cerita...</p>
     </div>
+</div>
 
 
-    <!-- ==========================
-        STARS
-    =========================== -->
 
-    <div id="stars"></div>
+<div class="ambient" aria-hidden="true">
+  <div class="orb orb-a"></div><div class="orb orb-b"></div><div class="orb orb-c"></div>
+  <div id="stars"></div><div id="sparkles"></div>
+</div>
 
+<!-- OPENING / PRELOADER -->
+<div id="prelude" class="prelude">
+  <div class="prelude-noise"></div>
+  <div class="prelude-center">
+    <button id="preludeHeart" class="prelude-heart" aria-label="Mulai kejutan">♡</button>
+    <div class="eyebrow">A LITTLE SURPRISE FOR</div>
+    <h1>Ocha</h1>
+    <p>tunggu sebentar... sesuatu yang manis sedang disiapkan ✨</p>
+    <div class="loOchar"><span id="loOcharBar"></span></div>
+    <div id="loOcharText" class="loOchar-text">memuat kenangan...</div>
+  </div>
+  <div class="prelude-bottom">headphones recommended · volume up 🎧</div>
+</div>
 
-    <!-- ==========================
-        FLOATING PARTICLES
-    =========================== -->
+<audio id="music" preload="auto" loop>
+  <source src="assets/music/birthday.mp3" type="audio/mpeg">
+</audio>
 
-    <div id="particles"></div>
+<div id="app" class="app is-hidden">
+  <heOchar class="topbar">
+    <div class="brand">DENIS <span>×</span> OCHA</div>
+    <div class="music-control">
+      <button id="musicBtn" class="icon-btn" aria-label="Musik">♫</button>
+      <span id="musicState">sound on</span>
+    </div>
+  </heOchar>
 
-
-    <!-- ==========================
-        LOADING
-    =========================== -->
-
-    <div id="loading">
-
-        <div class="loading-card">
-
-            <div class="birthday-icon">
-                🎂
-            </div>
-
-            <h1>
-                Sebentar...
-            </h1>
-
-            <p>
-                Lagi menyiapkan sesuatu untuk Rossa 🤍
-            </p>
-
-            <div class="loading-bar">
-
-                <div
-                    id="loadingProgress"
-                    class="loading-progress">
-                </div>
-
-            </div>
-
+  <main>
+    <!-- PAGE 1 -->
+    <section class="page active" data-page="0" id="page0">
+      <div class="page-layout hero-layout">
+        <div class="copy reveal">
+          <div class="eyebrow">01 · THE DAY IS YOURS</div>
+          <h2>Hari ini,<br><em>semesta sedikit lebih cerah.</em></h2>
+          <p class="lead">Karena seseorang yang abang kenal dari dunia virtual sedang bertambah satu tahun lagi. Jadi, sebelum lanjut... <strong>ambil napas dulu.</strong></p>
+          <button class="main-btn next" data-next="1">Buka cerita ini <span>→</span></button>
+          <div class="hint">klik, geser, dan nikmati pelan-pelan ✦</div>
         </div>
-
-    </div>
-
-
-    <!-- ==========================
-        MAIN
-    =========================== -->
-
-    <main id="app">
-
-
-        <!-- ==========================
-            OPENING
-        =========================== -->
-
-        <section
-            id="opening"
-            class="screen active"
-        >
-
-            <div class="glass-card opening-card">
-
-                <div class="small-label">
-                    ✨ A Special Day ✨
-                </div>
-
-                <div class="big-birthday">
-                    🎂
-                </div>
-
-                <p class="for-text">
-                    Untuk
-                </p>
-
-                <h1>
-                    Rossa Meparinda
-                </h1>
-
-                <p class="relationship">
-                    Ade Online / Ade Virtual ku 🤍
-                </p>
-
-                <p class="opening-text">
-
-                    Hari ini bukan hari biasa.
-
-                    <br><br>
-
-                    Karena seseorang yang cukup berarti
-                    dalam dunia online-ku sedang bertambah
-                    usia.
-
-                    <br><br>
-
-                    Jadi...
-
-                    <br>
-
-                    ada sedikit sesuatu yang ingin abang
-                    kasih buat Ocha.
-
-                </p>
-
-                <button
-                    id="openButton"
-                    class="primary-button"
-                >
-
-                    Buka Hadiah 🎁
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==========================
-            GREETING
-        =========================== -->
-
-        <section
-            id="greeting"
-            class="screen hidden"
-        >
-
-            <div class="glass-card">
-
-                <div class="section-icon">
-                    🎉
-                </div>
-
-                <p class="small-label">
-                    TODAY IS YOUR DAY
-                </p>
-
-                <h2>
-                    Happy Birthday,
-                    <br>
-                    Rossa! 🎂
-                </h2>
-
-                <div class="divider"></div>
-
-                <p class="message">
-
-                    Selamat ulang tahun ya, Ocha! 🤍
-
-                    <br><br>
-
-                    Semoga di umur yang baru ini,
-                    semua hal baik datang satu per satu
-                    ke kehidupan Ocha.
-
-                    <br><br>
-
-                    Semoga Ocha selalu sehat,
-                    panjang umur, dimudahkan dalam
-                    segala urusan, dan dikelilingi
-                    orang-orang yang benar-benar
-                    menyayangi Ocha.
-
-                    <br><br>
-
-                    Jangan lupa bahagia ya.
-
-                    Hari ini khusus buat Ocha. 🌷
-
-                </p>
-
-                <button
-                    id="greetingNext"
-                    class="primary-button"
-                >
-
-                    Lanjut ➜
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==========================
-            OUR STORY
-        =========================== -->
-
-        <section
-            id="story"
-            class="screen hidden"
-        >
-
-            <div class="glass-card">
-
-                <div class="section-icon">
-                    🌐
-                </div>
-
-                <p class="small-label">
-                    OUR LITTLE STORY
-                </p>
-
-                <h2>
-                    Berawal dari Dunia
-                    <br>
-                    Virtual
-                </h2>
-
-                <div class="story-image">
-
-                    <img
-                        src="assets/images/1.jpg"
-                        alt="Kenangan Rossa"
-                    >
-
-                </div>
-
-                <p class="message">
-
-                    Kalau dipikir-pikir,
-                    lucu juga bagaimana kita bisa
-                    saling kenal.
-
-                    <br><br>
-
-                    Kita bahkan tidak bertemu secara
-                    langsung di dunia nyata.
-
-                    <br><br>
-
-                    Kita bertemu lewat layar,
-                    lewat internet, lewat game,
-                    dan lewat dunia virtual yang
-                    awalnya mungkin terasa biasa saja.
-
-                    <br><br>
-
-                    Tapi dari sana,
-                    ternyata muncul sebuah hubungan
-                    yang cukup berarti.
-
-                </p>
-
-                <button
-                    id="storyNext"
-                    class="primary-button"
-                >
-
-                    Lanjut 🌸
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==========================
-            VIRTUAL SIBLING
-        =========================== -->
-
-        <section
-            id="virtual"
-            class="screen hidden"
-        >
-
-            <div class="glass-card">
-
-                <div class="section-icon">
-                    🫶
-                </div>
-
-                <p class="small-label">
-                    ONLINE FAMILY
-                </p>
-
-                <h2>
-                    Ade Online-ku
-                </h2>
-
-                <div class="quote">
-
-                    "Walaupun cuma kenal lewat
-                    dunia virtual,
-                    bukan berarti semuanya
-                    terasa tidak nyata."
-
-                </div>
-
-                <p class="message">
-
-                    Mungkin kalau orang lain dengar,
-                    mereka akan bilang:
-
-                    <br><br>
-
-                    "Cuma ade online."
-
-                    <br><br>
-
-                    Tapi menurut abang,
-                    seseorang tidak harus selalu
-                    berada di depan mata untuk bisa
-                    menjadi bagian dari sebuah cerita.
-
-                    <br><br>
-
-                    Ada orang-orang yang kita temui
-                    secara tidak sengaja di internet,
-                    lalu perlahan menjadi seseorang
-                    yang kehadirannya kita tunggu.
-
-                    <br><br>
-
-                    Dan Ocha adalah salah satunya.
-
-                    🤍
-
-                </p>
-
-                <button
-                    id="virtualNext"
-                    class="primary-button"
-                >
-
-                    Masih ada lagi 🎁
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==========================
-            GALLERY
-        =========================== -->
-
-        <section
-            id="gallery"
-            class="screen hidden"
-        >
-
-            <div class="gallery-container">
-
-                <div class="section-title">
-
-                    <div class="section-icon">
-                        📸
-                    </div>
-
-                    <p class="small-label">
-                        LITTLE MEMORIES
-                    </p>
-
-                    <h2>
-                        Sedikit Kenangan
-                    </h2>
-
-                    <p>
-                        Beberapa momen yang
-                        berhasil abang simpan.
-                    </p>
-
-                </div>
-
-
-                <div class="gallery-grid">
-
-
-                    <div class="gallery-item">
-
-                        <img
-                            src="assets/images/1.jpg"
-                            alt="Kenangan 1"
-                        >
-
-                    </div>
-
-
-                    <div class="gallery-item">
-
-                        <img
-                            src="assets/images/2.jpg"
-                            alt="Kenangan 2"
-                        >
-
-                    </div>
-
-
-                    <div class="gallery-item">
-
-                        <img
-                            src="assets/images/3.jpg"
-                            alt="Kenangan 3"
-                        >
-
-                    </div>
-
-
-                    <div class="gallery-item">
-
-                        <img
-                            src="assets/images/4.jpg"
-                            alt="Kenangan 4"
-                        >
-
-                    </div>
-
-
-                    <div class="gallery-item">
-
-                        <img
-                            src="assets/images/5.jpg"
-                            alt="Kenangan 5"
-                        >
-
-                    </div>
-
-
-                    <div class="gallery-item">
-
-                        <img
-                            src="assets/images/6.jpg"
-                            alt="Kenangan 6"
-                        >
-
-                    </div>
-
-
-                </div>
-
-
-                <button
-                    id="galleryNext"
-                    class="primary-button"
-                >
-
-                    Lanjut 🤍
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==========================
-            MESSAGE
-        =========================== -->
-
-        <section
-            id="message"
-            class="screen hidden"
-        >
-
-            <div class="glass-card">
-
-                <div class="section-icon">
-                    💌
-                </div>
-
-                <p class="small-label">
-                    A LITTLE MESSAGE
-                </p>
-
-                <h2>
-                    Untuk Rossa
-                </h2>
-
-                <div class="letter">
-
-                    <p>
-
-                        Ocha...
-
-                        <br><br>
-
-                        abang mungkin bukan abang yang
-                        selalu bisa ada setiap saat.
-
-                        <br><br>
-
-                        Kita juga cuma bertemu lewat
-                        dunia online.
-
-                        <br><br>
-
-                        Tapi abang benar-benar bersyukur
-                        pernah dipertemukan dengan Ocha.
-
-                        <br><br>
-
-                        Semoga bertambahnya umur Ocha
-                        bukan cuma sekadar angka.
-
-                        Semoga Ocha semakin kuat,
-                        semakin dewasa,
-                        semakin bahagia,
-                        dan semakin dekat dengan
-                        semua impian Ocha.
-
-                        <br><br>
-
-                        Kalau suatu hari nanti kita
-                        sudah jarang bermain,
-                        jarang ngobrol,
-                        atau bahkan sibuk dengan
-                        kehidupan masing-masing...
-
-                        <br><br>
-
-                        semoga Ocha tetap ingat
-                        kalau pernah ada seseorang
-                        di dunia virtual yang menganggap
-                        Ocha sebagai ade online-nya.
-
-                        🤍
-
-                    </p>
-
-                </div>
-
-
-                <button
-                    id="messageNext"
-                    class="primary-button"
-                >
-
-                    Pesan Terakhir 💖
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==========================
-            FINAL
-        =========================== -->
-
-        <section
-            id="final"
-            class="screen hidden"
-        >
-
-            <div class="glass-card final-card">
-
-                <div class="final-cake">
-                    🎂
-                </div>
-
-                <p class="small-label">
-                    ONE MORE TIME
-                </p>
-
-                <h1>
-                    HAPPY
-                    <br>
-                    BIRTHDAY
-                </h1>
-
-                <h2>
-                    ROSSA MEPARINDA
-                </h2>
-
-                <div class="divider"></div>
-
-                <p class="final-message">
-
-                    Selamat ulang tahun,
-                    Ade Online-ku! 🎉
-
-                    <br><br>
-
-                    Semoga semua doa baik yang
-                    Ocha panjatkan hari ini
-                    perlahan menjadi kenyataan.
-
-                    <br><br>
-
-                    Tetap jadi Rossa yang abang kenal,
-                    tetap ceria,
-                    tetap kuat,
-                    dan jangan lupa untuk selalu
-                    menjaga diri.
-
-                    <br><br>
-
-                    Dari abang online-mu,
-
-                    <br>
-
-                    <strong>
-                        DenisCepaka 🤍
-                    </strong>
-
-                </p>
-
-                <div class="final-hearts">
-                    🤍 🎂 🤍
-                </div>
-
-                <button
-                    id="restartButton"
-                    class="secondary-button"
-                >
-
-                    Lihat Lagi 🔄
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-    </main>
-
-
-    <!-- ==========================
-        MUSIC
-    =========================== -->
-
-    <audio
-        id="bgMusic"
-        loop
-    >
-
-        <source
-            src="assets/music/birthday.mp3"
-            type="audio/mpeg"
-        >
-
-    </audio>
-
-
-    <!-- ==========================
-        MUSIC BUTTON
-    =========================== -->
-
-    <button
-        id="musicButton"
-        class="music-button"
-    >
-
-        🎵
-
-    </button>
-
-
-    <!-- ==========================
-        LIGHTBOX
-    =========================== -->
-
-    <div
-        id="lightbox"
-        class="hidden"
-    >
-
-        <button
-            id="closeLightbox"
-        >
-
-            ✕
-
-        </button>
-
-        <img
-            id="lightboxImage"
-            src=""
-            alt="Preview"
-        >
-
-    </div>
-
-
-    <!-- ==========================
-        CONFETTI
-    =========================== -->
-
-    <canvas
-        id="confettiCanvas"
-    ></canvas>
-
-
-    <!-- ==========================
-        SCRIPT
-    =========================== -->
-
-    <script
-        src="script.js"
-    ></script>
-
-
+        <div class="visual-card reveal delay">
+          <div class="photo-slider" data-slider>
+            <img src="assets/images/5.jpg" alt="Ocha 1" class="slide active">
+            <img src="assets/images/4.jpg" alt="Ocha 2" class="slide">
+            <img src="assets/images/3.jpg" alt="Ocha 3" class="slide">
+            <div class="photo-caption"><span>01</span><b>little moments</b></div>
+            <div class="slider-dots"></div>
+          </div>
+          <div class="float-tag">for Ocha ♡</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 2 -->
+    <section class="page" data-page="1" id="page1">
+      <div class="page-layout split-layout">
+        <div class="visual-card portrait reveal">
+          <div class="photo-slider" data-slider>
+            <img src="assets/images/1.jpg" alt="Kenangan" class="slide active">
+            <img src="assets/images/2.jpg" alt="Kenangan" class="slide">
+            <img src="assets/images/6.jpg" alt="Kenangan" class="slide">
+            <div class="photo-caption"><span>02</span><b>somewhere online</b></div>
+            <div class="slider-dots"></div>
+          </div>
+        </div>
+        <div class="copy reveal delay">
+          <div class="eyebrow">02 · HOW IT STARTED</div>
+          <h2>Kita bertemu<br><em>lewat layar.</em></h2>
+          <div class="quote">“Lucu ya, kadang orang yang awalnya cuma lewat di internet malah meninggalkan cerita yang paling lama.”</div>
+          <p class="lead">Game, chat, dunia virtual... semuanya terdengar sederhana. Tapi dari hal-hal kecil itu, ada nama yang akhirnya terasa familiar.</p>
+          <button class="main-btn next" data-next="2">Lanjutkan <span>→</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 3 -->
+    <section class="page" data-page="2" id="page2">
+      <div class="page-layout story-layout">
+        <div class="copy reveal">
+          <div class="eyebrow">03 · LITTLE THINGS</div>
+          <h2>Yang kecil<br><em>ternyata berarti.</em></h2>
+          <p class="lead">Mungkin bukan cerita besar. Bukan juga sesuatu yang bisa dijelaskan dalam satu kalimat. Tapi ada obrolan, candaan, momen random, dan kehadiran yang membuat dunia online terasa sedikit lebih hangat.</p>
+          <div class="mini-cards">
+            <button class="mini-card" data-toast="Satu chat bisa bikin hari jadi lebih seru. 💬"><b>💬</b><span>chat kecil</span></button>
+            <button class="mini-card" data-toast="Momen random justru sering paling diingat. ✦"><b>✦</b><span>momen random</span></button>
+            <button class="mini-card" data-toast="Dan akhirnya... jadi cerita. 🤍"><b>♡</b><span>jadi cerita</span></button>
+          </div>
+          <button class="main-btn next" data-next="3">Ada satu hal lagi <span>→</span></button>
+        </div>
+        <div class="memory-stack reveal delay">
+          <div class="stack-photo p1"><img src="assets/images/2.jpg" alt="Memory"></div>
+          <div class="stack-photo p2"><img src="assets/images/6.jpg" alt="Memory"></div>
+          <div class="stack-photo p3"><img src="assets/images/1.jpg" alt="Memory"></div>
+          <div class="stack-note">“keep the good memories.”</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 4 -->
+    <section class="page" data-page="3" id="page3">
+      <div class="page-layout split-layout reverse">
+        <div class="copy reveal">
+          <div class="eyebrow">04 · ONLINE FAMILY</div>
+          <h2>“Cuma Ocha online.”<br><em>Katanya.</em></h2>
+          <p class="lead">Tapi menurut abang, jarak dan layar tidak otomatis membuat sebuah hubungan jadi tidak berarti. Ada orang yang tidak kita temui setiap hari, tapi tetap punya tempat di cerita kita.</p>
+          <div class="big-quote">Ocha adalah salah satunya. 🤍</div>
+          <button class="main-btn next" data-next="4">Lihat kenangan <span>→</span></button>
+        </div>
+        <div class="visual-card reveal delay">
+          <div class="photo-slider" data-slider>
+            <img src="assets/images/3.jpg" alt="Ocha" class="slide active">
+            <img src="assets/images/5.jpg" alt="Ocha" class="slide">
+            <img src="assets/images/4.jpg" alt="Ocha" class="slide">
+            <div class="photo-caption"><span>04</span><b>online, but real</b></div>
+            <div class="slider-dots"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 5 GALLERY -->
+    <section class="page" data-page="4" id="page4">
+      <div class="gallery-page">
+        <div class="center-head reveal">
+          <div class="eyebrow">05 · LITTLE GALLERY</div>
+          <h2>Geser. Klik. <em>Kenang.</em></h2>
+          <p>Setiap foto punya ruangnya sendiri. Klik foto untuk melihat lebih dekat.</p>
+        </div>
+        <div class="gallery-rail reveal delay" id="galleryRail">
+          <button class="gallery-tile featured"><img src="assets/images/1.jpg" alt="Memory 1"><span>01</span></button>
+          <button class="gallery-tile"><img src="assets/images/2.jpg" alt="Memory 2"><span>02</span></button>
+          <button class="gallery-tile"><img src="assets/images/3.jpg" alt="Memory 3"><span>03</span></button>
+          <button class="gallery-tile"><img src="assets/images/4.jpg" alt="Memory 4"><span>04</span></button>
+          <button class="gallery-tile"><img src="assets/images/5.jpg" alt="Memory 5"><span>05</span></button>
+          <button class="gallery-tile"><img src="assets/images/6.jpg" alt="Memory 6"><span>06</span></button>
+        </div>
+        <button class="main-btn next" data-next="5">abang masih punya pesan <span>→</span></button>
+      </div>
+    </section>
+
+    <!-- PAGE 6 MESSAGE -->
+    <section class="page" data-page="5" id="page5">
+      <div class="message-wrap">
+        <div class="center-head reveal">
+          <div class="eyebrow">06 · A LITTLE LETTER</div>
+          <h2>Untuk Ocha, <em>pelan-pelan.</em></h2>
+          <p>Karena kalau semuanya ditaruh dalam satu box, nanti malah kepanjangan. 😭</p>
+        </div>
+        <div class="letter-shell reveal delay">
+          <div class="letter-top"><span>TO: OCHA</span><span id="letterCounter">01 / 03</span></div>
+          <div id="letterText" class="letter-text"></div>
+          <div class="letter-nav">
+            <button id="letterBack" class="round-btn" disabled>←</button>
+            <div class="letter-progress"><span id="letterProgress"></span></div>
+            <button id="letterNext" class="round-btn">→</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 7 FINAL -->
+    <section class="page" data-page="6" id="page6">
+      <div class="final-stage">
+        <div class="balloon-field" id="balloons"></div>
+        <div class="final-glow"></div>
+        <div class="final-content reveal">
+          <div class="eyebrow">07 · ONE MORE TIME</div>
+          <div class="cake-orbit"><span>🎂</span></div>
+          <h2>HAPPY<br><em>BIRTHDAY</em></h2>
+          <p class="final-name">OCHA</p>
+          <p class="final-copy">Semoga tahun baru ini datang membawa banyak alasan untuk tersenyum, banyak hal baik yang tidak disangka, dan banyak cerita yang layak disimpan.</p>
+          <div class="signature">— DenisCepaka 🤍</div>
+          <div class="final-actions">
+            <button id="wishBtn" class="main-btn">Buat Permintaan ✨ ✨</button>
+            <button id="restartBtn" class="ghost-btn">ulang dari awal ↺</button>
+          </div>
+          <p id="wishResult" class="wish-result"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="page-nav" aria-label="Navigasi halaman">
+    <button id="prevPage" class="nav-arrow" aria-label="Sebelumnya">←</button>
+    <div id="pageDots" class="page-dots"></div>
+    <button id="nextPage" class="nav-arrow" aria-label="Berikutnya">→</button>
+  </nav>
+
+  <div id="toast" class="toast"></div>
+</div>
+
+<div id="lightbox" class="lightbox" aria-hidden="true">
+  <button id="lightboxClose" class="lightbox-close">×</button>
+  <img id="lightboxImg" src="" alt="Preview">
+</div>
+
+<script src="script.js"></script>
 </body>
-
 </html>
