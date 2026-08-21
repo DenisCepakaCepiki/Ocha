@@ -1302,4 +1302,4 @@ function lockButton(
         }
     );
 
-}
+};
