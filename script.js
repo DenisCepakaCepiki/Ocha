@@ -1,6 +1,7 @@
 /* =====================================================
    HAPPY BIRTHDAY ROSSA MEPARINDA
-   FINAL SCRIPT.JS
+   SCRIPT.JS
+   Part 1 — Core Navigation & Loading
 ===================================================== */
 
 
@@ -8,144 +9,302 @@
    ELEMENTS
 ===================================================== */
 
-const loading = document.getElementById("loading");
-const loadingProgress = document.getElementById("loadingProgress");
+const loading =
+    document.getElementById("loading");
 
-const app = document.getElementById("app");
+const loadingProgress =
+    document.getElementById("loadingProgress");
 
-const opening = document.getElementById("opening");
-const greeting = document.getElementById("greeting");
-const story = document.getElementById("story");
-const virtual = document.getElementById("virtual");
-const gallery = document.getElementById("gallery");
-const message = document.getElementById("message");
-const finalScreen = document.getElementById("final");
+const app =
+    document.getElementById("app");
 
-const openButton = document.getElementById("openButton");
-const greetingNext = document.getElementById("greetingNext");
-const storyNext = document.getElementById("storyNext");
-const virtualNext = document.getElementById("virtualNext");
-const galleryNext = document.getElementById("galleryNext");
-const messageNext = document.getElementById("messageNext");
-const restartButton = document.getElementById("restartButton");
+const screens = {
 
-const bgMusic = document.getElementById("bgMusic");
-const musicButton = document.getElementById("musicButton");
+    opening:
+        document.getElementById("opening"),
 
-const stars = document.getElementById("stars");
-const particles = document.getElementById("particles");
+    greeting:
+        document.getElementById("greeting"),
 
-const lightbox = document.getElementById("lightbox");
-const lightboxImage = document.getElementById("lightboxImage");
-const closeLightbox = document.getElementById("closeLightbox");
+    story:
+        document.getElementById("story"),
 
-const confettiCanvas = document.getElementById("confettiCanvas");
+    virtual:
+        document.getElementById("virtual"),
+
+    gallery:
+        document.getElementById("gallery"),
+
+    message:
+        document.getElementById("message"),
+
+    final:
+        document.getElementById("final")
+
+};
 
 
 /* =====================================================
-   SCREEN SYSTEM
+   BUTTONS
 ===================================================== */
 
-const allScreens = [
-    opening,
-    greeting,
-    story,
-    virtual,
-    gallery,
-    message,
-    finalScreen
-];
+const openButton =
+    document.getElementById("openButton");
+
+const greetingNext =
+    document.getElementById("greetingNext");
+
+const storyNext =
+    document.getElementById("storyNext");
+
+const virtualNext =
+    document.getElementById("virtualNext");
+
+const galleryNext =
+    document.getElementById("galleryNext");
+
+const messageNext =
+    document.getElementById("messageNext");
+
+const restartButton =
+    document.getElementById("restartButton");
 
 
-function showScreen(target) {
+/* =====================================================
+   CURRENT SCREEN
+===================================================== */
 
-    allScreens.forEach(screen => {
+let currentScreen = "opening";
 
-        if (!screen) return;
 
-        screen.classList.add("hidden");
-        screen.classList.remove("active");
+/* =====================================================
+   SHOW SCREEN
+===================================================== */
 
-    });
+function showScreen(screenName) {
 
+    const target =
+        screens[screenName];
 
     if (!target) return;
 
 
+    /* Hide semua screen */
+
+    Object.values(screens).forEach(
+        screen => {
+
+            screen.classList.add("hidden");
+
+            screen.classList.remove("active");
+
+        }
+    );
+
+
+    /* Tampilkan screen tujuan */
+
     target.classList.remove("hidden");
+
     target.classList.add("active");
 
 
+    currentScreen =
+        screenName;
+
+
+    /* Scroll ke atas */
+
     window.scrollTo({
+
         top: 0,
+
         behavior: "smooth"
+
     });
 
 }
 
 
 /* =====================================================
-   LOADING
+   LOADING SYSTEM
 ===================================================== */
 
-let progress = 0;
-
-const loadingInterval = setInterval(() => {
-
-    progress += Math.random() * 8;
-
-    if (progress >= 100) {
-
-        progress = 100;
-
-        clearInterval(loadingInterval);
-
-    }
+let loadingValue = 0;
 
 
-    if (loadingProgress) {
+const loadingInterval =
+    setInterval(() => {
+
+        loadingValue +=
+            Math.random() * 8;
+
+
+        if (loadingValue >= 100) {
+
+            loadingValue = 100;
+
+        }
+
 
         loadingProgress.style.width =
-            progress + "%";
+            loadingValue + "%";
+
+
+        if (loadingValue >= 100) {
+
+            clearInterval(
+                loadingInterval
+            );
+
+
+            setTimeout(() => {
+
+                loading.classList.add(
+                    "hidden"
+                );
+
+                app.classList.remove(
+                    "hidden"
+                );
+
+            }, 500);
+
+        }
+
+    }, 120);
+
+
+/* =====================================================
+   OPEN WEBSITE
+===================================================== */
+
+openButton.addEventListener(
+    "click",
+    () => {
+
+        showScreen("greeting");
 
     }
+);
 
 
-    if (progress >= 100) {
+/* =====================================================
+   GREETING → STORY
+===================================================== */
 
-        setTimeout(() => {
+greetingNext.addEventListener(
+    "click",
+    () => {
 
-            if (loading) {
-                loading.classList.add("hidden");
-            }
-
-            if (app) {
-                app.classList.remove("hidden");
-            }
-
-        }, 500);
+        showScreen("story");
 
     }
+);
 
-}, 100);
+
+/* =====================================================
+   STORY → VIRTUAL
+===================================================== */
+
+storyNext.addEventListener(
+    "click",
+    () => {
+
+        showScreen("virtual");
+
+    }
+);
+
+
+/* =====================================================
+   VIRTUAL → GALLERY
+===================================================== */
+
+virtualNext.addEventListener(
+    "click",
+    () => {
+
+        showScreen("gallery");
+
+    }
+);
+
+
+/* =====================================================
+   GALLERY → MESSAGE
+===================================================== */
+
+galleryNext.addEventListener(
+    "click",
+    () => {
+
+        showScreen("message");
+
+    }
+);
+
+
+/* =====================================================
+   MESSAGE → FINAL
+===================================================== */
+
+messageNext.addEventListener(
+    "click",
+    () => {
+
+        showScreen("final");
+
+        startConfetti();
+
+    }
+);
+
+
+/* =====================================================
+   RESTART
+===================================================== */
+
+restartButton.addEventListener(
+    "click",
+    () => {
+
+        showScreen("opening");
+
+        window.scrollTo({
+
+            top: 0,
+
+            behavior: "smooth"
+
+        });
+
+    }
+);
+/* =====================================================
+   HAPPY BIRTHDAY ROSSA MEPARINDA
+   SCRIPT.JS
+   Part 2 — Music, Stars & Floating Particles
+===================================================== */
 
 
 /* =====================================================
    MUSIC
 ===================================================== */
 
+const bgMusic =
+    document.getElementById("bgMusic");
+
+const musicButton =
+    document.getElementById("musicButton");
+
+
 let musicPlaying = false;
 
 
-function updateMusicButton() {
-
-    if (!musicButton) return;
-
-    musicButton.textContent =
-        musicPlaying ? "🔊" : "🎵";
-
-}
-
+/* =====================================================
+   PLAY MUSIC
+===================================================== */
 
 function playMusic() {
 
@@ -155,24 +314,36 @@ function playMusic() {
     bgMusic.volume = 0.45;
 
 
-    bgMusic.play()
-        .then(() => {
+    const playPromise =
+        bgMusic.play();
 
-            musicPlaying = true;
 
-            updateMusicButton();
+    if (playPromise !== undefined) {
 
-        })
-        .catch(() => {
+        playPromise
+            .then(() => {
 
-            musicPlaying = false;
+                musicPlaying = true;
 
-            updateMusicButton();
+                updateMusicButton();
 
-        });
+            })
+            .catch(() => {
+
+                musicPlaying = false;
+
+                updateMusicButton();
+
+            });
+
+    }
 
 }
 
+
+/* =====================================================
+   PAUSE MUSIC
+===================================================== */
 
 function pauseMusic() {
 
@@ -184,6 +355,23 @@ function pauseMusic() {
     musicPlaying = false;
 
     updateMusicButton();
+
+}
+
+
+/* =====================================================
+   MUSIC BUTTON
+===================================================== */
+
+function updateMusicButton() {
+
+    if (!musicButton) return;
+
+
+    musicButton.textContent =
+        musicPlaying
+            ? "🔊"
+            : "🎵";
 
 }
 
@@ -211,7 +399,7 @@ if (musicButton) {
 
 
 /* =====================================================
-   OPEN BUTTON
+   START MUSIC AFTER USER INTERACTION
 ===================================================== */
 
 if (openButton) {
@@ -219,8 +407,6 @@ if (openButton) {
     openButton.addEventListener(
         "click",
         () => {
-
-            showScreen(greeting);
 
             playMusic();
 
@@ -231,118 +417,22 @@ if (openButton) {
 
 
 /* =====================================================
-   NAVIGATION
+   CREATE STARS
 ===================================================== */
 
-if (greetingNext) {
+const starsContainer =
+    document.getElementById("stars");
 
-    greetingNext.addEventListener(
-        "click",
-        () => {
-
-            showScreen(story);
-
-        }
-    );
-
-}
-
-
-if (storyNext) {
-
-    storyNext.addEventListener(
-        "click",
-        () => {
-
-            showScreen(virtual);
-
-        }
-    );
-
-}
-
-
-if (virtualNext) {
-
-    virtualNext.addEventListener(
-        "click",
-        () => {
-
-            showScreen(gallery);
-
-        }
-    );
-
-}
-
-
-if (galleryNext) {
-
-    galleryNext.addEventListener(
-        "click",
-        () => {
-
-            showScreen(message);
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   MESSAGE → FINAL
-===================================================== */
-
-if (messageNext) {
-
-    messageNext.addEventListener(
-        "click",
-        () => {
-
-            showScreen(finalScreen);
-
-            startConfetti();
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   RESTART
-===================================================== */
-
-if (restartButton) {
-
-    restartButton.addEventListener(
-        "click",
-        () => {
-
-            stopConfetti();
-
-            showScreen(opening);
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   STARS
-===================================================== */
 
 function createStars() {
 
-    if (!stars) return;
+    if (!starsContainer) return;
 
 
-    stars.innerHTML = "";
+    starsContainer.innerHTML = "";
 
 
-    const amount =
+    const starCount =
         window.innerWidth < 600
             ? 70
             : 120;
@@ -350,7 +440,7 @@ function createStars() {
 
     for (
         let i = 0;
-        i < amount;
+        i < starCount;
         i++
     ) {
 
@@ -358,7 +448,8 @@ function createStars() {
             document.createElement("span");
 
 
-        star.className = "star";
+        star.className =
+            "star";
 
 
         star.style.left =
@@ -389,33 +480,38 @@ function createStars() {
             size + "px";
 
 
-        stars.appendChild(star);
+        starsContainer.appendChild(
+            star
+        );
 
     }
 
 }
 
 
-createStars();
-
-
 /* =====================================================
-   FLOATING PARTICLES
+   CREATE FLOATING PARTICLE
 ===================================================== */
 
+const particlesContainer =
+    document.getElementById("particles");
+
+
 const particleSymbols = [
+
     "🤍",
     "✨",
     "🌸",
     "💜",
     "🎀",
     "⭐"
+
 ];
 
 
 function createParticle() {
 
-    if (!particles) return;
+    if (!particlesContainer) return;
 
 
     const particle =
@@ -451,28 +547,87 @@ function createParticle() {
         duration + "s";
 
 
-    particles.appendChild(
+    particlesContainer.appendChild(
         particle
     );
 
 
-    setTimeout(() => {
+    setTimeout(
+        () => {
 
-        particle.remove();
+            particle.remove();
 
-    }, duration * 1000);
+        },
+        duration * 1000
+    );
 
 }
 
 
-setInterval(
-    createParticle,
-    900
-);
+/* =====================================================
+   PARTICLE LOOP
+===================================================== */
+
+function startParticles() {
+
+    setInterval(
+        () => {
+
+            createParticle();
+
+        },
+        900
+    );
+
+}
 
 
 /* =====================================================
-   GALLERY LIGHTBOX
+   INITIALIZE BACKGROUND
+===================================================== */
+
+createStars();
+
+startParticles();
+
+
+/* =====================================================
+   RECREATE STARS WHEN RESIZING
+===================================================== */
+
+let resizeTimer;
+
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        clearTimeout(
+            resizeTimer
+        );
+
+
+        resizeTimer =
+            setTimeout(
+                () => {
+
+                    createStars();
+
+                },
+                300
+            );
+
+    }
+);
+/* =====================================================
+   HAPPY BIRTHDAY ROSSA MEPARINDA
+   SCRIPT.JS
+   Part 3 — Gallery Lightbox
+===================================================== */
+
+
+/* =====================================================
+   GALLERY ELEMENTS
 ===================================================== */
 
 const galleryItems =
@@ -481,42 +636,55 @@ const galleryItems =
     );
 
 
-galleryItems.forEach(item => {
-
-    const image =
-        item.querySelector("img");
-
-
-    if (!image) return;
-
-
-    item.addEventListener(
-        "click",
-        () => {
-
-            if (!lightbox) return;
-            if (!lightboxImage) return;
-
-
-            lightboxImage.src =
-                image.src;
-
-
-            lightbox.classList.remove(
-                "hidden"
-            );
-
-
-            document.body.style.overflow =
-                "hidden";
-
-        }
+const lightbox =
+    document.getElementById(
+        "lightbox"
     );
 
-});
+
+const lightboxImage =
+    document.getElementById(
+        "lightboxImage"
+    );
 
 
-function closeGallery() {
+const closeLightbox =
+    document.getElementById(
+        "closeLightbox"
+    );
+
+
+/* =====================================================
+   OPEN LIGHTBOX
+===================================================== */
+
+function openLightbox(imageSource) {
+
+    if (!lightbox) return;
+
+    if (!lightboxImage) return;
+
+
+    lightboxImage.src =
+        imageSource;
+
+
+    lightbox.classList.remove(
+        "hidden"
+    );
+
+
+    document.body.style.overflow =
+        "hidden";
+
+}
+
+
+/* =====================================================
+   CLOSE LIGHTBOX
+===================================================== */
+
+function closeLightboxWindow() {
 
     if (!lightbox) return;
 
@@ -532,15 +700,58 @@ function closeGallery() {
 }
 
 
+/* =====================================================
+   GALLERY CLICK
+===================================================== */
+
+galleryItems.forEach(
+    item => {
+
+        const image =
+            item.querySelector(
+                "img"
+            );
+
+
+        if (!image) return;
+
+
+        item.addEventListener(
+            "click",
+            () => {
+
+                openLightbox(
+                    image.src
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =====================================================
+   CLOSE BUTTON
+===================================================== */
+
 if (closeLightbox) {
 
     closeLightbox.addEventListener(
         "click",
-        closeGallery
+        () => {
+
+            closeLightboxWindow();
+
+        }
     );
 
 }
 
+
+/* =====================================================
+   CLICK OUTSIDE IMAGE
+===================================================== */
 
 if (lightbox) {
 
@@ -553,7 +764,7 @@ if (lightbox) {
                 lightbox
             ) {
 
-                closeGallery();
+                closeLightboxWindow();
 
             }
 
@@ -563,6 +774,10 @@ if (lightbox) {
 }
 
 
+/* =====================================================
+   ESCAPE KEY
+===================================================== */
+
 document.addEventListener(
     "keydown",
     event => {
@@ -571,7 +786,16 @@ document.addEventListener(
             event.key === "Escape"
         ) {
 
-            closeGallery();
+            if (
+                lightbox &&
+                !lightbox.classList.contains(
+                    "hidden"
+                )
+            ) {
+
+                closeLightboxWindow();
+
+            }
 
         }
 
@@ -580,25 +804,60 @@ document.addEventListener(
 
 
 /* =====================================================
-   CONFETTI
+   PREVENT IMAGE DRAG
 ===================================================== */
 
-let confettiContext = null;
+document
+    .querySelectorAll(
+        "img"
+    )
+    .forEach(
+        image => {
 
-let confettiAnimation = null;
+            image.addEventListener(
+                "dragstart",
+                event => {
+
+                    event.preventDefault();
+
+                }
+            );
+
+        }
+    );
+/* =====================================================
+   HAPPY BIRTHDAY ROSSA MEPARINDA
+   SCRIPT.JS
+   Part 4 — Confetti, Final Effects & Initialization
+===================================================== */
+
+
+/* =====================================================
+   CONFETTI CANVAS
+===================================================== */
+
+const confettiCanvas =
+    document.getElementById(
+        "confettiCanvas"
+    );
+
+
+const confettiContext =
+    confettiCanvas
+        ? confettiCanvas.getContext("2d")
+        : null;
+
 
 let confettiPieces = [];
 
-
-if (confettiCanvas) {
-
-    confettiContext =
-        confettiCanvas.getContext("2d");
-
-}
+let confettiAnimation;
 
 
-function resizeConfetti() {
+/* =====================================================
+   RESIZE CANVAS
+===================================================== */
+
+function resizeConfettiCanvas() {
 
     if (!confettiCanvas) return;
 
@@ -613,18 +872,12 @@ function resizeConfetti() {
 }
 
 
-resizeConfetti();
+resizeConfettiCanvas();
 
 
 window.addEventListener(
     "resize",
-    () => {
-
-        resizeConfetti();
-
-        createStars();
-
-    }
+    resizeConfettiCanvas
 );
 
 
@@ -634,16 +887,13 @@ window.addEventListener(
 
 function createConfetti() {
 
-    if (!confettiCanvas) return;
-
-
     confettiPieces = [];
 
 
     const amount =
         window.innerWidth < 600
-            ? 80
-            : 150;
+            ? 100
+            : 180;
 
 
     for (
@@ -662,17 +912,28 @@ function createConfetti() {
                 -Math.random() *
                 window.innerHeight,
 
-            size:
-                Math.random() * 7 + 4,
+            width:
+                Math.random() * 8 + 4,
+
+            height:
+                Math.random() * 12 + 6,
 
             speed:
-                Math.random() * 3 + 2,
+                Math.random() * 4 + 3,
 
             rotation:
                 Math.random() * 360,
 
             rotationSpeed:
-                Math.random() * 6 - 3
+                Math.random() * 8 - 4,
+
+            opacity:
+                Math.random() * .5 + .5,
+
+            symbol:
+                Math.random() > .5
+                    ? "♥"
+                    : "✦"
 
         });
 
@@ -690,9 +951,7 @@ function drawConfetti() {
     if (
         !confettiCanvas ||
         !confettiContext
-    ) {
-        return;
-    }
+    ) return;
 
 
     confettiContext.clearRect(
@@ -703,69 +962,73 @@ function drawConfetti() {
     );
 
 
-    confettiPieces.forEach(piece => {
+    confettiPieces.forEach(
+        piece => {
 
-        confettiContext.save();
-
-
-        confettiContext.translate(
-            piece.x,
-            piece.y
-        );
+            confettiContext.save();
 
 
-        confettiContext.rotate(
-            piece.rotation *
-            Math.PI /
-            180
-        );
+            confettiContext.translate(
+                piece.x,
+                piece.y
+            );
 
 
-        confettiContext.fillStyle =
-            [
-                "#f9a8d4",
-                "#c4b5fd",
-                "#ffffff",
-                "#f472b6",
-                "#a78bfa"
-            ][
-                Math.floor(
-                    Math.random() * 5
-                )
-            ];
+            confettiContext.rotate(
+                piece.rotation *
+                Math.PI /
+                180
+            );
 
 
-        confettiContext.fillRect(
-            -piece.size / 2,
-            -piece.size / 2,
-            piece.size,
-            piece.size * 1.8
-        );
+            confettiContext.globalAlpha =
+                piece.opacity;
 
 
-        confettiContext.restore();
+            confettiContext.font =
+                `${piece.height}px Poppins, sans-serif`;
 
 
-        piece.y += piece.speed;
+            confettiContext.fillStyle =
+                Math.random() > .5
+                    ? "#f9a8d4"
+                    : "#c4b5fd";
 
-        piece.rotation +=
-            piece.rotationSpeed;
+
+            confettiContext.fillText(
+                piece.symbol,
+                0,
+                0
+            );
 
 
-        if (
-            piece.y >
-            window.innerHeight + 30
-        ) {
+            confettiContext.restore();
 
-            piece.y = -20;
 
-            piece.x =
-                Math.random() *
-                window.innerWidth;
+            piece.y +=
+                piece.speed;
+
+
+            piece.rotation +=
+                piece.rotationSpeed;
+
+
+            if (
+                piece.y >
+                window.innerHeight + 50
+            ) {
+
+                piece.y =
+                    -20;
+
+                piece.x =
+                    Math.random() *
+                    window.innerWidth;
+
+            }
 
         }
-
-    });
+    );
 
 
     confettiAnimation =
@@ -785,26 +1048,32 @@ function startConfetti() {
     if (
         !confettiCanvas ||
         !confettiContext
-    ) {
-        return;
-    }
+    ) return;
 
-
-    stopConfetti();
-
-
-    resizeConfetti();
 
     createConfetti();
+
+
+    if (confettiAnimation) {
+
+        cancelAnimationFrame(
+            confettiAnimation
+        );
+
+    }
+
 
     drawConfetti();
 
 
-    setTimeout(() => {
+    setTimeout(
+        () => {
 
-        stopConfetti();
+            stopConfetti();
 
-    }, 8000);
+        },
+        9000
+    );
 
 }
 
@@ -821,14 +1090,15 @@ function stopConfetti() {
             confettiAnimation
         );
 
-        confettiAnimation = null;
+        confettiAnimation =
+            null;
 
     }
 
 
     if (
-        confettiCanvas &&
-        confettiContext
+        confettiContext &&
+        confettiCanvas
     ) {
 
         confettiContext.clearRect(
@@ -844,20 +1114,192 @@ function stopConfetti() {
 
 
 /* =====================================================
-   IMAGE DRAG PREVENTION
+   FINAL SCREEN EFFECT
 ===================================================== */
 
-document
-    .querySelectorAll("img")
-    .forEach(image => {
+function finalScreenEffect() {
 
-        image.addEventListener(
-            "dragstart",
-            event => {
-
-                event.preventDefault();
-
-            }
+    const finalScreen =
+        document.getElementById(
+            "final"
         );
 
-    });
+
+    if (!finalScreen) return;
+
+
+    finalScreen.classList.add(
+        "final-active"
+    );
+
+
+    setTimeout(
+        () => {
+
+            finalScreen.classList.remove(
+                "final-active"
+            );
+
+        },
+        3000
+    );
+
+}
+
+
+/* =====================================================
+   WATCH FINAL SCREEN
+===================================================== */
+
+const finalObserver =
+    new MutationObserver(
+        mutations => {
+
+            mutations.forEach(
+                mutation => {
+
+                    if (
+                        mutation.target.id !==
+                        "final"
+                    ) return;
+
+
+                    if (
+                        !mutation.target.classList.contains(
+                            "hidden"
+                        )
+                    ) {
+
+                        finalScreenEffect();
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+if (screens.final) {
+
+    finalObserver.observe(
+        screens.final,
+        {
+            attributes: true,
+            attributeFilter: [
+                "class"
+            ]
+        }
+    );
+
+}
+
+
+/* =====================================================
+   RESTART CLEANUP
+===================================================== */
+
+if (restartButton) {
+
+    restartButton.addEventListener(
+        "click",
+        () => {
+
+            stopConfetti();
+
+            closeLightboxWindow();
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   PAGE VISIBILITY
+===================================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if (!bgMusic) return;
+
+
+        if (
+            document.hidden
+        ) {
+
+            bgMusic.pause();
+
+            musicPlaying =
+                false;
+
+            updateMusicButton();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   PAGE LOAD
+===================================================== */
+
+window.addEventListener(
+    "load",
+    () => {
+
+        createStars();
+
+        resizeConfettiCanvas();
+
+    }
+);
+
+
+/* =====================================================
+   PREVENT ACCIDENTAL DOUBLE CLICK
+===================================================== */
+
+let buttonLocked = false;
+
+
+function lockButton(
+    button,
+    callback
+) {
+
+    if (!button) return;
+
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            if (buttonLocked)
+                return;
+
+
+            buttonLocked = true;
+
+
+            callback();
+
+
+            setTimeout(
+                () => {
+
+                    buttonLocked =
+                        false;
+
+                },
+                500
+            );
+
+        }
+    );
+
+}
