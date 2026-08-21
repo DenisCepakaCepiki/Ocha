@@ -20,7 +20,7 @@ function startMusic(){
 }
 
 ["Menyiapkan cerita...","Mengingat awal kenal...","Reality → Discord → Roblox...","Sebentar lagi..."].forEach((t,i)=>{
-  setTimeout(()=>{if(loadText)loadText.textContent=t},i*10000);
+  setTimeout(()=>{if(loadText)loadText.textContent=t},i*500);
 });
 
 setTimeout(()=>{
@@ -58,7 +58,7 @@ function spark(x,y,char="✦"){
 
 document.addEventListener("click",e=>{
   if(e.target.closest("button")){
-    for(let i=0;i<3;i++)setTimeout(()=>spark(e.clientX+(Math.random()*20-10),e.clientY+(Math.random()*20-10),i%2?"✦":"♡"),i*545);
+    for(let i=0;i<3;i++)setTimeout(()=>spark(e.clientX+(Math.random()*20-10),e.clientY+(Math.random()*20-10),i%2?"✦":"♡"),i*45);
   }
 });
 
@@ -92,6 +92,27 @@ function showSlide(i){
 $(".prev",slider).addEventListener("click",()=>showSlide(current-1));
 $(".next",slider).addEventListener("click",()=>showSlide(current+1));
 
+let swipeStartX=0;
+let swipeStartY=0;
+let swipeActive=false;
+
+slider.addEventListener("pointerdown",e=>{
+  swipeStartX=e.clientX;
+  swipeStartY=e.clientY;
+  swipeActive=true;
+  slider.setPointerCapture?.(e.pointerId);
+});
+slider.addEventListener("pointerup",e=>{
+  if(!swipeActive) return;
+  swipeActive=false;
+  const deltaX=e.clientX-swipeStartX;
+  const deltaY=e.clientY-swipeStartY;
+  if(Math.abs(deltaX)>45 && Math.abs(deltaX)>Math.abs(deltaY)){
+    showSlide(current+(deltaX<0?1:-1));
+  }
+});
+slider.addEventListener("pointercancel",()=>{swipeActive=false});
+
 /* Auto slideshow is deliberately paused while the user is interacting with it.
    It resumes gently after 4 seconds. */
 let autoTimer=setInterval(()=>showSlide(current+1),5200);
@@ -102,22 +123,19 @@ $("#wishBtn").addEventListener("click",()=>{
   toast("Wish sent! Semoga yang baik-baik datang satu-satu ✨");
   for(let i=0;i<18;i++){
     setTimeout(()=>{
-      const x=window.innerWidth/2+(Math.random()-.5)*window.innerWidth*.575;
-      const y=window.innerHeight*.55+(Math.random()-.5)*620;
+      const x=window.innerWidth/2+(Math.random()-.5)*window.innerWidth*.75;
+      const y=window.innerHeight*.55+(Math.random()-.5)*120;
       spark(x,y,i%3?"✦":"♡");
-    },i*455);
+    },i*45);
   }
 });
 
 const observer=new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
     if(entry.isIntersecting){
-      $$(".reveal",entry.target).forEach((el,i)=>setTimeout(()=>el.classList.add("visible"),i*270));
+      $$(".reveal",entry.target).forEach((el,i)=>setTimeout(()=>el.classList.add("visible"),i*70));
     }
   });
 },{threshold:.12});
 $$(".section").forEach(s=>observer.observe(s));
 
-/* No swipe-to-change-page logic exists.
-   Native vertical scrolling is intentionally normal browser scrolling. */
-   
