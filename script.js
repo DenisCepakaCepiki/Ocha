@@ -20,7 +20,7 @@ function startMusic(){
 }
 
 ["Menyiapkan cerita...","Mengingat awal kenal...","Reality → Discord → Roblox...","Sebentar lagi..."].forEach((t,i)=>{
-  setTimeout(()=>{if(loadText)loadText.textContent=t},i*500);
+  setTimeout(()=>{if(loadText)loadText.textContent=t},i*10000);
 });
 
 setTimeout(()=>{
@@ -58,7 +58,7 @@ function spark(x,y,char="✦"){
 
 document.addEventListener("click",e=>{
   if(e.target.closest("button")){
-    for(let i=0;i<3;i++)setTimeout(()=>spark(e.clientX+(Math.random()*20-10),e.clientY+(Math.random()*20-10),i%2?"✦":"♡"),i*45);
+    for(let i=0;i<3;i++)setTimeout(()=>spark(e.clientX+(Math.random()*20-10),e.clientY+(Math.random()*20-10),i%2?"✦":"♡"),i*545);
   }
 });
 
@@ -102,17 +102,17 @@ $("#wishBtn").addEventListener("click",()=>{
   toast("Wish sent! Semoga yang baik-baik datang satu-satu ✨");
   for(let i=0;i<18;i++){
     setTimeout(()=>{
-      const x=window.innerWidth/2+(Math.random()-.5)*window.innerWidth*.75;
-      const y=window.innerHeight*.55+(Math.random()-.5)*120;
+      const x=window.innerWidth/2+(Math.random()-.5)*window.innerWidth*.575;
+      const y=window.innerHeight*.55+(Math.random()-.5)*620;
       spark(x,y,i%3?"✦":"♡");
-    },i*45);
+    },i*455);
   }
 });
 
 const observer=new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
     if(entry.isIntersecting){
-      $$(".reveal",entry.target).forEach((el,i)=>setTimeout(()=>el.classList.add("visible"),i*70));
+      $$(".reveal",entry.target).forEach((el,i)=>setTimeout(()=>el.classList.add("visible"),i*270));
     }
   });
 },{threshold:.12});
